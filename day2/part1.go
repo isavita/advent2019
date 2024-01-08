@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-	// Open input file
 	f, err := os.Open("day2/input.txt")
 	if err != nil {
 		fmt.Println(err)
@@ -17,7 +16,6 @@ func main() {
 	}
 	defer f.Close()
 
-	// Read input data
 	var inputData []int
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
@@ -33,20 +31,15 @@ func main() {
 		return
 	}
 
-	// Replace positions 1 and 2
 	inputData[1] = 12
 	inputData[2] = 2
 
-	// Execute program
 	result := executeProgram(inputData)
 
-	// Print result
 	fmt.Println(result)
 }
 
-// Function to execute the program
 func executeProgram(data []int) int {
-	// Iterate over each element in the array
 	for i := 0; i < len(data)-3; i += 4 {
 		pos1 := data[i+1]
 		pos2 := data[i+2]

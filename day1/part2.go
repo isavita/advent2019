@@ -58,5 +58,5 @@ func main() {
 	}
 	total := getTotal(masses)
 
-	fmt.Println("Total Fuel Requirement: ", total)
+	fmt.Println(total)
 }

@@ -7,6 +7,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 type Cmd int
@@ -189,8 +190,8 @@ func permutations(arr []int) [][]int {
 
 func main() {
 	max := 0
-	for _, phase := range permutations([]int{0, 1, 2, 3, 4}) {
-		res := run5(phase)
+	for _, phase := range permutations([]int{5, 6, 7, 8, 9}) {
+		res := runLoop(phase)
 		if res > max {
 			max = res
 		}
@@ -198,18 +199,27 @@ func main() {
 	fmt.Println(max)
 }
 
-func run5(phase []int) int {
+func runLoop(phase []int) int {
+	// ch0       ch1       ch2       ch3        ch4       ch0 (loop)
+	// -->  VM0  -->  VM1  -->  VM2  -->   VM3  -->  VM4  -->
+
 	var chs = make([]chan int, 6)
 
 	for i := 0; i < 6; i++ {
 		chs[i] = make(chan int, 1)
 	}
 
+	var wg sync.WaitGroup
+	wg.Add(5)
 	for i := 0; i < 5; i++ {
 		chs[i] <- phase[i]
-		go NewVM("day7/input.txt", chs[i], chs[i+1]).Run()
+		go func(i int) {
+			NewVM("day7/input.txt", chs[i], chs[(i+1)%5]).Run()
+			wg.Done()
+		}(i)
 	}
 
 	chs[0] <- 0
-	return <-chs[5]
+	wg.Wait()
+	return <-chs[0]
 }
